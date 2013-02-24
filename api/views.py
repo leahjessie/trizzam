@@ -1,5 +1,6 @@
+from models import TriviaBit
+from mongoengine import *
 from random import choice, shuffle
-
 from apiclient import discovery
 from apiclient import model
 
@@ -37,6 +38,14 @@ def hi(request):
 
   out = out + ' of which ' + type_name + '?'
   out = out + '<br/><br/>'
+  #Write a TriviaBit to db:
+  triviaBit = TriviaBit(question='Which of these is not a planet?')
+  triviaBit.correctAnswer = 'Pluto'
+  triviaBit.wrongAnswers = ['Earth', 'Mars', 'Neptune']
+  triviaBit.save()
+  for tb in TriviaBit.objects:
+    out = out + str(tb) + "<br/>"
+
 
   # Correct answer + three wrong answers
   answers = [topic]
