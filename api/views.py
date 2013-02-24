@@ -38,17 +38,10 @@ def hi(request):
 
   out = out + ' of which ' + type_name + '?'
   out = out + '<br/><br/>'
-  #Write a TriviaBit to db:
-  triviaBit = TriviaBit(question='Which of these is not a planet?')
-  triviaBit.correctAnswer = 'Pluto'
-  triviaBit.wrongAnswers = ['Earth', 'Mars', 'Neptune']
-  triviaBit.save()
-  for tb in TriviaBit.objects:
-    out = out + str(tb) + "<br/>"
-
 
   # Correct answer + three wrong answers
   answers = [topic]
+  wrongAnswers = []
   while len(answers) < 4:
     other_topic = choice(topics)
     if other_topic[prop['id']][0]['id'] == topic[prop['id']][0]['id']:
@@ -56,6 +49,7 @@ def hi(request):
     if other_topic in answers:
       continue
     answers.append(other_topic)
+    wrongAnswers.append(other_topic['name'])
   shuffle(answers)
 
   for answer in answers:
@@ -63,5 +57,11 @@ def hi(request):
 
   out = out + '<br/>'
   out = out + 'Answer: ' + topic['name']
+
+  # #Write a TriviaBit to db:
+  triviaBit = TriviaBit(question=question)
+  triviaBit.correctAnswer = topic['name']
+  triviaBit.wrongAnswers = wrongAnswers
+  triviaBit.save()
 
   return HttpResponse(out)
