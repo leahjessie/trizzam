@@ -37,6 +37,7 @@ def hi(request):
     out = out + ' were the ' + prop['name']
 
   out = out + ' of which ' + type_name + '?'
+  question = out
   out = out + '<br/><br/>'
 
   # Correct answer + three wrong answers
