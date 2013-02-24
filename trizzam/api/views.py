@@ -8,10 +8,18 @@ def hi(request):
   API_KEY = 'AIzaSyBn6iR4pp-a9upfgtvzGm3ZusFQ_YsHhNc'
   model.JsonModel.alt_param = ""
   freebase = discovery.build('freebase', 'v1', developerKey=API_KEY)
-  query = [{'id': None, 'name': None, 'type': '/astronomy/planet'}]
+  query = [{
+    'id': '/theater/play',
+    'name': None,
+    'properties': [{
+      'name': None
+    }],
+    'type': '/type/type'
+  }]
 
   response = json.loads(freebase.mqlread(query=json.dumps(query)).execute())
   out = ""
-  for planet in response['result']:
-    out = out + planet['name'] + ", "
+  for type_def in response['result']:
+    for prop in type_def['properties']:
+      out = out + prop['name'] + ", "
   return HttpResponse(out)
