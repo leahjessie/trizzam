@@ -1,23 +1,23 @@
 from random import choice, shuffle
 
-from django.http import HttpResponse
-
 from apiclient import discovery
 from apiclient import model
-import json
+
+from django.http import HttpResponse
+
+import mql
 
 def hi(request):
   API_KEY = 'AIzaSyBn6iR4pp-a9upfgtvzGm3ZusFQ_YsHhNc'
   model.JsonModel.alt_param = ""
   freebase = discovery.build('freebase', 'v1', developerKey=API_KEY)
+  mqlFetcher = mql.MqlFetcher(freebase, '/theater/play')
 
-  type_id = '/theater/play'
-
-  type_info = fetch_type_info(freebase, type_id)
+  type_info = mqlFetcher.fetchTypeInfo()
   type_name = type_info['name']
   prop = choice(type_info['properties'])
 
-  topics = fetch_topics(freebase, type_id, prop['id'])
+  topics = mqlFetcher.fetchTopics(prop['id'])
   topic = choice(topics)
 
   # Construct the question
@@ -44,31 +44,3 @@ def hi(request):
   out = out + 'Answer: ' + topic['name']
 
   return HttpResponse(out)
-
-def fetch_type_info(freebase, type_id):
-  query = [{
-    'id': type_id,
-    'name': None,
-    'properties': [{
-      'name': None,
-      'id': None
-    }],
-    'type': '/type/type'
-  }]
-  response = json.loads(freebase.mqlread(query=json.dumps(query)).execute())
-  return response['result'][0]
-
-def fetch_topics(freebase, type_id, prop_id):
-  query = [{
-    'type': type_id,
-    'id': None,
-    'name': None
-  }]
-  query[0][prop_id] = [{
-    'id': None,
-    'name': None,
-    'optional': False
-  }]
-  response = json.loads(freebase.mqlread(query=json.dumps(query)).execute())
-  return response['result']
-
