@@ -15,15 +15,27 @@ def hi(request):
 
   type_info = mqlFetcher.fetchTypeInfo()
   type_name = type_info['name']
-  prop = choice(type_info['properties'])
+
+  while True:
+    prop = choice(type_info['properties'])
+    if prop['expected_type']['default_property'] is None:
+      break
 
   topics = mqlFetcher.fetchTopics(prop['id'])
   topic = choice(topics)
 
   # Construct the question
-  prop_value_name = topic[prop['id']][0]['name']
-  out = prop_value_name
-  out = out + ' was the ' + prop['name'] + ' of which ' + type_name + '?'
+  propValues = topic[prop['id']]
+  if len(propValues) > 3:
+    propValues = propValues[:3]
+
+  out = ' and '.join([propValue['name'] for propValue in propValues])
+  if len(propValues) == 1:
+    out = out + ' was the ' + prop['name']
+  else:
+    out = out + ' were the ' + prop['name']
+
+  out = out + ' of which ' + type_name + '?'
   out = out + '<br/><br/>'
 
   # Correct answer + three wrong answers

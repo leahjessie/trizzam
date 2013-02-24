@@ -12,7 +12,10 @@ class MqlFetcher:
       'name': None,
       'properties': [{
         'name': None,
-        'id': None
+        'id': None,
+        'expected_type': {
+          'default_property': None
+        }
       }],
       'type': '/type/type',
       'limit': 1
